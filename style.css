@@ -49,7 +49,7 @@ body {
 .loader-bar-container {
     width: 100%;
     height: 1px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     overflow: hidden;
 }
 
@@ -73,7 +73,9 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.5;
     }
 
@@ -158,9 +160,9 @@ body {
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
-    background: rgba(5,5,5,0.8);
+    background: rgba(5, 5, 5, 0.8);
     backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(197,160,89,0.1);
+    border-bottom: 1px solid rgba(197, 160, 89, 0.1);
 }
 
 .logo-main {
@@ -177,9 +179,9 @@ body {
     transition: 0.3s;
 }
 
-    .nav-item:hover {
-        color: var(--gold);
-    }
+.nav-item:hover {
+    color: var(--gold);
+}
 
 .nav-project-link {
     border: 1px solid var(--gold);
@@ -191,10 +193,10 @@ body {
     transition: 0.3s;
 }
 
-    .nav-project-link:hover {
-        background: var(--gold);
-        color: black;
-    }
+.nav-project-link:hover {
+    background: var(--gold);
+    color: black;
+}
 
 /* --- HERO --- */
 .hero {
@@ -215,7 +217,7 @@ body {
 
 .outline-text {
     color: transparent;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
 }
 
 .gold-gradient {
@@ -272,15 +274,15 @@ body {
 .exp-card {
     background: var(--card-bg);
     padding: 50px 40px;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
     transition: var(--transition);
 }
 
-    .exp-card:hover {
-        border-color: var(--gold);
-        transform: translateY(-10px);
-    }
+.exp-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-10px);
+}
 
 /* Portfolio */
 .portfolio-grid {
@@ -320,20 +322,37 @@ body {
     background: #111;
     margin-bottom: 20px;
     overflow: hidden;
-    border: 1px solid rgba(197,160,89,0.1);
+    border: 1px solid rgba(197, 160, 89, 0.1);
 }
 
-    .team-img-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: 0.6s;
-        filter: sepia(0.5) contrast(1.2);
-    }
+.team-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.6s;
+    filter: sepia(0.5) contrast(1.2);
+}
 
 .team-card:hover img {
     filter: sepia(0);
     transform: scale(1.05);
+}
+
+/* NEW: TEAM BIO STYLES */
+.bio-text {
+    font-size: 13px;
+    color: #888;
+    margin-top: 15px;
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+.role-title {
+    color: var(--gold);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
 }
 
 /* Pricing */
@@ -352,12 +371,12 @@ body {
     position: relative;
 }
 
-    .price-card.featured {
-        border-color: var(--gold);
-        transform: scale(1.05);
-        z-index: 10;
-        background: #0d0d0d;
-    }
+.price-card.featured {
+    border-color: var(--gold);
+    transform: scale(1.05);
+    z-index: 10;
+    background: #0d0d0d;
+}
 
 .popular {
     position: absolute;
@@ -378,10 +397,10 @@ body {
     font-family: 'Cormorant Garamond';
 }
 
-    .price span {
-        font-size: 1rem;
-        color: #555;
-    }
+.price span {
+    font-size: 1rem;
+    color: #555;
+}
 
 .price-card ul {
     list-style: none;
@@ -412,10 +431,10 @@ body {
     transition: 0.3s;
 }
 
-    .price-btn:hover {
-        background: var(--gold);
-        color: black;
-    }
+.price-btn:hover {
+    background: var(--gold);
+    color: black;
+}
 
 /* Contact */
 .contact-box {
@@ -436,7 +455,8 @@ body {
     margin-bottom: 20px;
 }
 
-input, textarea {
+input,
+textarea {
     width: 100%;
     padding: 20px;
     background: #0c0c0c;
@@ -446,9 +466,9 @@ input, textarea {
     outline: none;
 }
 
-    input:focus {
-        border-color: var(--gold);
-    }
+input:focus {
+    border-color: var(--gold);
+}
 
 .btn-submit {
     width: 100%;
@@ -460,22 +480,37 @@ input, textarea {
     letter-spacing: 2px;
 }
 
-/* Footer */
+/* Footer & Socials */
 .footer-minimal {
     padding: 80px 6%;
     text-align: center;
     border-top: 1px solid #111;
 }
 
+.footer-logo {
+    height: 25px;
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
 .social-links {
     margin-bottom: 30px;
 }
 
-    .social-links a {
-        color: var(--gold);
-        font-size: 1.5rem;
-        margin: 0 15px;
-    }
+.social-links a {
+    color: var(--gold);
+    font-size: 1.5rem;
+    margin: 0 15px;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+/* NEW: SOCIAL HOVER EFFECT */
+.social-links a:hover {
+    color: #fff;
+    transform: translateY(-5px);
+    text-shadow: 0 0 15px var(--gold);
+}
 
 /* Reveal Logic */
 .reveal {
@@ -484,17 +519,21 @@ input, textarea {
     transition: 1s ease-out;
 }
 
-    .reveal.revealed {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
 
 @media (max-width: 900px) {
-    .pricing-grid, .team-grid, .portfolio-grid {
+
+    .pricing-grid,
+    .team-grid,
+    .portfolio-grid {
         grid-template-columns: 1fr;
     }
 
-    .custom-cursor, .cursor-dot {
+    .custom-cursor,
+    .cursor-dot {
         display: none;
     }
 
