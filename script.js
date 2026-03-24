@@ -175,8 +175,9 @@ class Preloader {
     }
 
     initScrollAnimations() {
-        // Fade up animations for sections
-        $$('.section-header, .exp-card, .project-card, .team-card, .price-card').forEach((el) => {
+        // Fade up animations for section headers only
+        // (cards are handled by grid stagger below — no double-animation)
+        $$('.section-header').forEach((el) => {
             gsap.from(el, {
                 y: 50,
                 opacity: 0,
@@ -191,7 +192,7 @@ class Preloader {
             });
         });
 
-        // Stagger animations for grids
+        // Stagger animations for grids (handles all cards)
         ['.expertise-grid', '.portfolio-grid', '.team-grid', '.pricing-grid'].forEach(gridSelector => {
             const grid = $(gridSelector);
             if (grid) {
