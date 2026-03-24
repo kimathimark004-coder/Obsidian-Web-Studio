@@ -56,7 +56,7 @@
     <nav class="navbar" role="navigation" aria-label="Main navigation">
         <div class="nav-container">
             <div class="nav-left">
-                <a href="#" class="logo-link" aria-label="Obsidian home">
+                <a href="#main-content" class="logo-link" aria-label="Obsidian home">
                     <img src="logo.png" alt="Obsidian" class="logo-main">
                 </a>
             </div>
@@ -67,7 +67,7 @@
                 <a href="#work" class="nav-item" data-section="work">Archives</a>
                 <a href="#team" class="nav-item" data-section="team">Team</a>
                 <a href="#pricing" class="nav-item" data-section="pricing">Investment</a>
-                <a href="#contact" class="nav-project-link">Start a Project</a>
+                <a href="#contact" class="nav-cta btn-primary" aria-label="Start a new project">Start a Project</a>
             </div>
 
             <!-- Mobile Menu Toggle -->
@@ -102,9 +102,11 @@
                     </h1>
                     <p class="hero-subtitle">Crafting high-performance digital landmarks for the bold.</p>
                     <div class="hero-actions">
-                        <a href="#work" class="btn-primary magnetic-btn" data-magnetic>
+                        <a href="#work" class="btn-secondary magnetic-btn" data-magnetic aria-label="Explore our portfolio">
                             <span class="btn-text">Explore Works</span>
-                            <div class="btn-glow"></div>
+                        </a>
+                        <a href="#contact" class="btn-primary magnetic-btn" data-magnetic aria-label="Start a project with us">
+                            <span class="btn-text">Start a Project</span>
                         </a>
                     </div>
                 </div>
@@ -158,8 +160,6 @@
                 </div>
                 
                 <div class="expertise-grid">
-                    <div class="timeline-line" aria-hidden="true"></div>
-                    
                     <div class="exp-card" tabindex="0">
                         <div class="card-number">01</div>
                         <div class="card-icon">
@@ -199,7 +199,7 @@
                 </div>
                 
                 <div class="portfolio-grid">
-                    <div class="project-card large" tabindex="0" role="article">
+                    <div class="project-card" tabindex="0" role="article">
                         <div class="project-image">
                             <img src="Portfolio/work1.jpg" alt="Elite Real Estate project showcase" loading="lazy">
                             <div class="image-overlay"></div>
@@ -208,7 +208,7 @@
                             <span class="project-category">Web Architecture</span>
                             <h3 class="project-title">Elite Real Estate</h3>
                             <p class="project-description">Premium real estate platform with advanced search and virtual tours.</p>
-                            <a href="#" class="project-link" aria-label="View Elite Real Estate project">
+                            <a href="#contact" class="btn-tertiary project-link" aria-label="Inquire about Elite Real Estate project">
                                 <span>View Project</span>
                                 <i class="fas fa-arrow-right" aria-hidden="true"></i>
                             </a>
@@ -224,7 +224,7 @@
                             <span class="project-category">Brand Identity</span>
                             <h3 class="project-title">Nexus Fintech</h3>
                             <p class="project-description">Complete brand redesign for modern financial services.</p>
-                            <a href="#" class="project-link" aria-label="View Nexus Fintech project">
+                            <a href="#contact" class="btn-tertiary project-link" aria-label="Inquire about Nexus Fintech project">
                                 <span>View Project</span>
                                 <i class="fas fa-arrow-right" aria-hidden="true"></i>
                             </a>
@@ -326,7 +326,7 @@
                             <li><i class="fas fa-check" aria-hidden="true"></i> Core Brand Identity</li>
                             <li><i class="fas fa-check" aria-hidden="true"></i> Mobile Optimization</li>
                         </ul>
-                        <a href="#contact" class="price-btn" aria-label="Begin inquiry for Essential tier">Begin Inquiry</a>
+                        <a href="#contact" class="price-btn btn-secondary" aria-label="Begin inquiry for Essential tier">Begin Inquiry</a>
                     </div>
                     
                     <div class="price-card featured" tabindex="0" role="article">
@@ -347,7 +347,7 @@
                             <li><i class="fas fa-check" aria-hidden="true"></i> Performance Strategy</li>
                             <li><i class="fas fa-check" aria-hidden="true"></i> 3 Months Support</li>
                         </ul>
-                        <a href="#contact" class="price-btn" aria-label="Begin inquiry for Signature tier">Begin Inquiry</a>
+                        <a href="#contact" class="price-btn btn-primary" aria-label="Begin inquiry for Signature tier">Begin Inquiry</a>
                     </div>
                     
                     <div class="price-card" tabindex="0" role="article">
@@ -364,7 +364,7 @@
                             <li><i class="fas fa-check" aria-hidden="true"></i> Custom Web Software</li>
                             <li><i class="fas fa-check" aria-hidden="true"></i> Dedicated Manager</li>
                         </ul>
-                        <a href="#contact" class="price-btn" aria-label="Begin inquiry for Enterprise tier">Begin Inquiry</a>
+                        <a href="#contact" class="price-btn btn-secondary" aria-label="Begin inquiry for Enterprise tier">Begin Inquiry</a>
                     </div>
                 </div>
             </div>
@@ -391,7 +391,7 @@
                                 <div class="contact-icon"><i class="fas fa-envelope" aria-hidden="true"></i></div>
                                 <div>
                                     <span class="contact-label">Email Us</span>
-                                    <a href="mailto:hello@obsidianstudio.com" class="contact-link">hello@obsidianstudio.com</a>
+                                    <a href="mailto:Obsidianstudio.ke@gmail.com" class="contact-link">Obsidianstudio.ke@gmail.com</a>
                                 </div>
                             </div>
                             <div class="contact-item">
@@ -405,12 +405,11 @@
                     </div>
                     
                     <div class="contact-right">
-                        <form action="https://formsubmit.co/el/civewi" method="POST" class="contact-form" id="contactForm">
+                        <form action="https://formsubmit.co/Obsidianstudio.ke@gmail.com" method="POST" class="contact-form" id="contactForm">
                             <!-- FormSubmit Configuration -->
                             <input type="hidden" name="_subject" value="New Client Inquiry - Obsidian Web Studios">
                             <input type="hidden" name="_captcha" value="false">
                             <input type="hidden" name="_template" value="table">
-                            <input type="hidden" name="_next" value="https://yourwebsite.com/thanks.html">
                             <!-- Honeypot anti-spam -->
                             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
                             
@@ -445,13 +444,12 @@
                                 <span class="field-highlight"></span>
                             </div>
                             
-                            <button type="submit" class="submit-btn magnetic-btn" data-magnetic id="submitBtn">
+                            <button type="submit" class="submit-btn magnetic-btn" data-magnetic id="submitBtn" aria-label="Submit your project inquiry">
                                 <span class="btn-text">Start Your Project</span>
                                 <span class="btn-icon"><i class="fas fa-arrow-right" aria-hidden="true"></i></span>
                                 <span class="loading-spinner" aria-hidden="true">
                                     <i class="fas fa-circle-notch fa-spin"></i>
                                 </span>
-                                <div class="btn-glow"></div>
                             </button>
 
                             <!-- Success/Error Messages -->
@@ -492,7 +490,7 @@
                 <h4>Contact Info</h4>
                 <ul class="footer-links">
                     <li><a href="tel:+254700276610">+254 700 276 610</a></li>
-                    <li><a href="mailto:hello@obsidianstudio.com">hello@obsidianstudio.com</a></li>
+                    <li><a href="mailto:Obsidianstudio.ke@gmail.com">Obsidianstudio.ke@gmail.com</a></li>
                 </ul>
             </div>
             
