@@ -1097,25 +1097,60 @@ class AccessibilityEnhancements {
     }
 }
 
+// ===== FORCE-HIDE LOADER (failsafe) =====
+function forceHideLoader() {
+    const loader = document.getElementById('loader-wrapper');
+    if (loader && loader.style.display !== 'none') {
+        loader.style.opacity = '0';
+        loader.style.visibility = 'hidden';
+        loader.style.pointerEvents = 'none';
+        setTimeout(() => { loader.style.display = 'none'; }, 500);
+        document.body.classList.add('loaded');
+    }
+}
+
+// Absolute failsafe — if nothing else works, hide loader after 5s
+setTimeout(forceHideLoader, 5000);
+
+// Also hide on window load (all assets done)
+window.addEventListener('load', () => {
+    setTimeout(forceHideLoader, 2000);
+});
+
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
-    const preloader = new Preloader();
+    try {
+        const preloader = new Preloader();
+    } catch (err) {
+        console.error('Preloader error:', err);
+        forceHideLoader();
+    }
 
     // Initialize everything else after a tick to ensure DOM is stable
     setTimeout(() => {
-        new CustomCursor();
-        new Navigation();
-        new SmoothScrolling();
-        new MagneticButtons();
-        new PortfolioEffects();
-        new TeamCardEffects();
-        new FormEnhancements();
-        new ScrollProgress();
-        new BackToTop();
-        new ParallaxEffects();
-        new IntersectionEnhancements();
-        new PerformanceOptimizations();
-        new AccessibilityEnhancements();
+        const components = [
+            ['CustomCursor', CustomCursor],
+            ['Navigation', Navigation],
+            ['SmoothScrolling', SmoothScrolling],
+            ['MagneticButtons', MagneticButtons],
+            ['PortfolioEffects', PortfolioEffects],
+            ['TeamCardEffects', TeamCardEffects],
+            ['FormEnhancements', FormEnhancements],
+            ['ScrollProgress', ScrollProgress],
+            ['BackToTop', BackToTop],
+            ['ParallaxEffects', ParallaxEffects],
+            ['IntersectionEnhancements', IntersectionEnhancements],
+            ['PerformanceOptimizations', PerformanceOptimizations],
+            ['AccessibilityEnhancements', AccessibilityEnhancements],
+        ];
+
+        components.forEach(([name, Component]) => {
+            try {
+                new Component();
+            } catch (err) {
+                console.error(`${name} init error:`, err);
+            }
+        });
 
         console.log('🚀 Obsidian Web Studio - All systems initialized');
     }, 100);

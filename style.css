@@ -291,6 +291,17 @@ body:hover .cursor-dot {
 .loader-hidden {
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
+}
+
+/* Failsafe: auto-hide loader after 4s even if JS fails */
+@keyframes loaderFailsafe {
+    0%, 90% { opacity: 1; visibility: visible; }
+    100% { opacity: 0; visibility: hidden; }
+}
+
+#loader-wrapper {
+    animation: loaderFailsafe 4s ease-in-out forwards;
 }
 
 @keyframes logoGlow {
