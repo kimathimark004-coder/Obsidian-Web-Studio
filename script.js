@@ -1,6 +1,11 @@
 /**
  * OBSIDIAN WEB STUDIO - PREMIUM INTERACTIONS
  * Enhanced with GSAP animations and modern JS features
+ * 
+ * Dependencies (loaded in HTML):
+ *   - gsap.min.js (core)
+ *   - ScrollTrigger.min.js
+ *   - ScrollToPlugin.min.js
  */
 
 // ===== GLOBAL VARIABLES =====
@@ -11,6 +16,11 @@ let currentSection = '';
 
 // ===== GSAP SETUP =====
 gsap.registerPlugin(ScrollTrigger);
+
+// Register ScrollToPlugin if available (loaded via CDN)
+if (typeof ScrollToPlugin !== 'undefined') {
+    gsap.registerPlugin(ScrollToPlugin);
+}
 
 // Set GSAP defaults
 gsap.defaults({
@@ -44,7 +54,7 @@ const throttle = (func, limit) => {
             inThrottle = true;
             setTimeout(() => inThrottle = false, limit);
         }
-    }
+    };
 };
 
 // ===== PRELOADER =====
@@ -64,11 +74,12 @@ class Preloader {
                 clearInterval(interval);
                 setTimeout(() => this.hide(), 300);
             }
-            this.bar.style.width = `${progress}%`;
+            if (this.bar) this.bar.style.width = `${progress}%`;
         }, 150);
     }
 
     hide() {
+        if (!this.loader) return;
         gsap.to(this.loader, {
             opacity: 0,
             duration: 0.8,
@@ -83,8 +94,6 @@ class Preloader {
     onLoadComplete() {
         isLoaded = true;
         document.body.classList.add('loaded');
-        
-        // Initialize all animations after load
         this.initPageAnimations();
     }
 
@@ -106,29 +115,43 @@ class Preloader {
 
     initHeroAnimations() {
         const titleLines = $$('.title-line');
-        
+
         titleLines.forEach((line, index) => {
-            // Create split text effect manually
-            const text = line.textContent;
+            const text = line.textContent.trim();
+            const hasGoldGradient = line.classList.contains('gold-gradient');
+
+            // Clear the line content
             line.innerHTML = '';
-            
-            text.split('').forEach((char, charIndex) => {
+
+            // If this line has the gold-gradient class, we need to handle it
+            // differently. Remove gradient from parent, apply to each char span.
+            if (hasGoldGradient) {
+                line.classList.remove('gold-gradient');
+            }
+
+            text.split('').forEach((char) => {
                 const span = document.createElement('span');
                 span.textContent = char === ' ' ? '\u00A0' : char;
                 span.style.display = 'inline-block';
                 span.style.transform = 'translateY(100%)';
                 span.style.opacity = '0';
+
+                // Apply gold gradient to each character span if parent had it
+                if (hasGoldGradient) {
+                    span.classList.add('gold-gradient');
+                }
+
                 line.appendChild(span);
             });
 
-            // Animate characters
+            // Animate characters in
             gsap.to(line.children, {
                 y: 0,
                 opacity: 1,
                 duration: 0.8,
                 stagger: 0.02,
                 ease: "back.out(1.7)",
-                delay: 0.8 + (index * 0.2)
+                delay: 0.8 + (index * 0.3)
             });
         });
 
@@ -138,22 +161,22 @@ class Preloader {
             opacity: 0,
             duration: 0.8,
             ease: "power2.out",
-            delay: 1.4
+            delay: 1.6
         });
 
-        // Hero button
+        // Hero buttons
         gsap.from('.hero-actions', {
             y: 30,
             opacity: 0,
             duration: 0.8,
             ease: "power2.out",
-            delay: 1.6
+            delay: 1.8
         });
     }
 
     initScrollAnimations() {
         // Fade up animations for sections
-        $$('.section-header, .exp-card, .project-card, .team-card, .price-card').forEach((el, index) => {
+        $$('.section-header, .exp-card, .project-card, .team-card, .price-card').forEach((el) => {
             gsap.from(el, {
                 y: 50,
                 opacity: 0,
@@ -161,7 +184,7 @@ class Preloader {
                 ease: "power2.out",
                 scrollTrigger: {
                     trigger: el,
-                    start: "top 80%",
+                    start: "top 85%",
                     end: "bottom 20%",
                     toggleActions: "play none none reverse"
                 }
@@ -177,16 +200,44 @@ class Preloader {
                     y: 50,
                     opacity: 0,
                     duration: 0.6,
-                    stagger: 0.1,
+                    stagger: 0.15,
                     ease: "power2.out",
                     scrollTrigger: {
                         trigger: grid,
-                        start: "top 80%",
+                        start: "top 85%",
                         toggleActions: "play none none reverse"
                     }
                 });
             }
         });
+
+        // Contact section
+        const contactSection = $('.contact-content');
+        if (contactSection) {
+            gsap.from('.contact-left', {
+                x: -50,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: contactSection,
+                    start: "top 80%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+            gsap.from('.contact-right', {
+                x: 50,
+                opacity: 0,
+                duration: 0.8,
+                delay: 0.2,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: contactSection,
+                    start: "top 80%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        }
 
         // Counter animations
         this.initCounterAnimations();
@@ -195,18 +246,22 @@ class Preloader {
     initCounterAnimations() {
         $$('[data-target]').forEach(counter => {
             const target = parseInt(counter.dataset.target);
-            
+            let hasAnimated = false;
+
             ScrollTrigger.create({
                 trigger: counter,
-                start: "top 80%",
+                start: "top 85%",
                 onEnter: () => {
-                    gsap.from(counter, {
-                        textContent: 0,
+                    if (hasAnimated) return;
+                    hasAnimated = true;
+                    
+                    const obj = { val: 0 };
+                    gsap.to(obj, {
+                        val: target,
                         duration: 2,
                         ease: "power2.out",
-                        snap: { textContent: 1 },
-                        onUpdate: function() {
-                            counter.textContent = Math.floor(this.targets()[0].textContent);
+                        onUpdate: () => {
+                            counter.textContent = Math.floor(obj.val);
                         }
                     });
                 }
@@ -221,9 +276,9 @@ class CustomCursor {
         this.cursor = $('.custom-cursor');
         this.dot = $('.cursor-dot');
         this.isVisible = false;
-        
-        if ('ontouchstart' in window) return; // Skip on mobile
-        
+
+        if ('ontouchstart' in window || !this.cursor || !this.dot) return;
+
         this.init();
     }
 
@@ -240,7 +295,7 @@ class CustomCursor {
 
     updatePosition(e) {
         if (!this.isVisible) return;
-        
+
         requestAnimationFrame(() => {
             this.cursor.style.left = `${e.clientX}px`;
             this.cursor.style.top = `${e.clientY}px`;
@@ -261,7 +316,7 @@ class CustomCursor {
 
     bindHoverEffects() {
         const hoverables = 'a, button, .project-card, .exp-card, .team-card, .price-card, [tabindex]';
-        
+
         $$(hoverables).forEach(el => {
             el.addEventListener('mouseenter', () => {
                 gsap.to(this.cursor, {
@@ -292,7 +347,7 @@ class Navigation {
         this.mobileOverlay = $('.mobile-menu-overlay');
         this.navItems = $$('.nav-item, .mobile-nav-item');
         this.isMenuOpen = false;
-        
+
         this.init();
     }
 
@@ -305,7 +360,7 @@ class Navigation {
     bindEvents() {
         // Mobile menu toggle
         this.mobileToggle?.addEventListener('click', this.toggleMobileMenu.bind(this));
-        
+
         // Close menu on link click
         $$('.mobile-nav-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -353,9 +408,8 @@ class Navigation {
 
         const updateNavbar = () => {
             const currentScrollY = window.pageYOffset;
-            
+
             if (currentScrollY > lastScrollY && currentScrollY > 100) {
-                // Scrolling down
                 if (scrollDirection !== 'down') {
                     scrollDirection = 'down';
                     if (!this.isMenuOpen) {
@@ -363,7 +417,6 @@ class Navigation {
                     }
                 }
             } else {
-                // Scrolling up
                 if (scrollDirection !== 'up') {
                     scrollDirection = 'up';
                     gsap.to(this.navbar, { y: 0, duration: 0.3 });
@@ -384,24 +437,23 @@ class Navigation {
 
     initActiveSection() {
         const sections = $$('section[id]');
-        
+
         const updateActiveSection = () => {
             let current = '';
-            
+
             sections.forEach(section => {
                 const rect = section.getBoundingClientRect();
-                if (rect.top <= 100 && rect.bottom >= 100) {
+                if (rect.top <= 150 && rect.bottom >= 150) {
                     current = section.id;
                 }
             });
 
             if (current !== currentSection) {
                 currentSection = current;
-                
-                // Update active nav items
+
                 this.navItems.forEach(item => {
                     item.classList.remove('active');
-                    if (item.getAttribute('href') === `#${current}` || 
+                    if (item.getAttribute('href') === `#${current}` ||
                         item.dataset.section === current) {
                         item.classList.add('active');
                     }
@@ -410,6 +462,50 @@ class Navigation {
         };
 
         window.addEventListener('scroll', throttle(updateActiveSection, 100));
+        // Run once on load
+        updateActiveSection();
+    }
+}
+
+// ===== SMOOTH SCROLLING =====
+class SmoothScrolling {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        $$('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const targetId = link.getAttribute('href');
+                if (!targetId || targetId === '#') return;
+
+                const target = $(targetId);
+                if (!target) return;
+
+                e.preventDefault();
+
+                // Use ScrollToPlugin if available, otherwise fallback
+                if (typeof ScrollToPlugin !== 'undefined') {
+                    gsap.to(window, {
+                        scrollTo: {
+                            y: target,
+                            offsetY: 80,
+                            autoKill: false
+                        },
+                        duration: 1.2,
+                        ease: "power2.inOut"
+                    });
+                } else {
+                    // Fallback: native smooth scroll
+                    const targetRect = target.getBoundingClientRect();
+                    const targetY = window.pageYOffset + targetRect.top - 80;
+                    window.scrollTo({
+                        top: targetY,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
     }
 }
 
@@ -431,7 +527,7 @@ class MagneticButtons {
         const rect = btn.getBoundingClientRect();
         const x = e.clientX - rect.left - rect.width / 2;
         const y = e.clientY - rect.top - rect.height / 2;
-        
+
         gsap.to(btn, {
             x: x * 0.3,
             y: y * 0.3,
@@ -472,7 +568,7 @@ class PortfolioEffects {
             const rect = card.getBoundingClientRect();
             const x = (e.clientX - rect.left - rect.width / 2) / 20;
             const y = (e.clientY - rect.top - rect.height / 2) / 20;
-            
+
             gsap.to(image, {
                 x: x,
                 y: y,
@@ -488,20 +584,6 @@ class PortfolioEffects {
                 duration: 0.5,
                 ease: "elastic.out(1, 0.3)"
             });
-        });
-
-        // Image reveal animation
-        ScrollTrigger.create({
-            trigger: card,
-            start: "top 80%",
-            onEnter: () => {
-                gsap.from(image, {
-                    scale: 1.2,
-                    clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)",
-                    duration: 1,
-                    ease: "power2.out"
-                });
-            }
         });
     }
 }
@@ -524,10 +606,10 @@ class TeamCardEffects {
             const rect = card.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
-            
+
             const deltaX = (e.clientX - centerX) / (rect.width / 2);
             const deltaY = (e.clientY - centerY) / (rect.height / 2);
-            
+
             gsap.to(card, {
                 rotationY: deltaX * 10,
                 rotationX: -deltaY * 10,
@@ -551,23 +633,22 @@ class TeamCardEffects {
 // ===== FORM ENHANCEMENTS =====
 class FormEnhancements {
     constructor() {
-        this.form = $('.contact-form');
-        this.submitBtn = $('.submit-btn');
-        this.inputs = $$('.form-group input, .form-group textarea, .form-group select');
+        this.form = $('#contactForm');
+        this.submitBtn = $('#submitBtn');
+        this.inputs = $$('#contactForm .form-group input, #contactForm .form-group textarea, #contactForm .form-group select');
         this.successMsg = $('#formSuccess');
         this.errorMsg = $('#formError');
-        
+
         this.init();
     }
 
     init() {
+        if (!this.form) return;
         this.bindFormEvents();
         this.enhanceInputs();
     }
 
     bindFormEvents() {
-        if (!this.form) return;
-
         this.form.addEventListener('submit', this.handleSubmit.bind(this));
     }
 
@@ -576,9 +657,63 @@ class FormEnhancements {
         if (this.errorMsg) this.errorMsg.classList.remove('show');
     }
 
+    validateForm() {
+        let isValid = true;
+        const name = this.form.querySelector('#contact-name');
+        const email = this.form.querySelector('#contact-email');
+        const service = this.form.querySelector('#contact-service');
+        const message = this.form.querySelector('#contact-message');
+
+        // Clear previous error styles
+        [name, email, service, message].forEach(field => {
+            if (field) field.style.borderColor = '';
+        });
+
+        // Name validation
+        if (!name.value.trim() || name.value.trim().length < 2) {
+            name.style.borderColor = '#ef4444';
+            isValid = false;
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.value.trim() || !emailRegex.test(email.value.trim())) {
+            email.style.borderColor = '#ef4444';
+            isValid = false;
+        }
+
+        // Service validation
+        if (!service.value) {
+            service.style.borderColor = '#ef4444';
+            isValid = false;
+        }
+
+        // Message validation
+        if (!message.value.trim() || message.value.trim().length < 10) {
+            message.style.borderColor = '#ef4444';
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
     async handleSubmit(e) {
         e.preventDefault();
         this.hideFeedback();
+
+        // Client-side validation
+        if (!this.validateForm()) {
+            if (this.errorMsg) {
+                this.errorMsg.querySelector('span').textContent = 'Please fill in all fields correctly.';
+                this.errorMsg.classList.add('show');
+            }
+            return;
+        }
+
+        // Reset error message text
+        if (this.errorMsg) {
+            this.errorMsg.querySelector('span').textContent = 'Something went wrong. Please try again or contact us directly.';
+        }
 
         // Add loading state
         this.submitBtn.classList.add('loading');
@@ -605,21 +740,25 @@ class FormEnhancements {
                     color: '#FFFFFF',
                     duration: 0.3,
                     onComplete: () => {
-                        this.submitBtn.querySelector('.btn-text').textContent = 'Sent Successfully!';
+                        const btnText = this.submitBtn.querySelector('.btn-text');
+                        if (btnText) btnText.textContent = 'Sent Successfully!';
                         setTimeout(() => {
                             gsap.to(this.submitBtn, {
-                                backgroundColor: 'var(--gold)',
-                                color: 'var(--obsidian-black)',
+                                backgroundColor: '#D4AF37',
+                                color: '#0A0A0A',
                                 duration: 0.3
                             });
-                            this.submitBtn.querySelector('.btn-text').textContent = 'Start Your Project';
+                            if (btnText) btnText.textContent = 'Start Your Project';
                         }, 3000);
                     }
                 });
 
-                // Reset form
+                // Reset form and labels
                 this.form.reset();
                 this.updateLabels();
+
+                // Clear any error border colors
+                this.inputs.forEach(input => { input.style.borderColor = ''; });
 
                 // Auto-hide success after 6s
                 setTimeout(() => this.hideFeedback(), 6000);
@@ -640,8 +779,11 @@ class FormEnhancements {
 
     enhanceInputs() {
         this.inputs.forEach(input => {
-            // Update labels on input/blur
-            input.addEventListener('input', this.updateLabels.bind(this));
+            input.addEventListener('input', () => {
+                // Clear error border on input
+                input.style.borderColor = '';
+                this.updateLabels();
+            });
             input.addEventListener('blur', this.updateLabels.bind(this));
             input.addEventListener('focus', this.updateLabels.bind(this));
         });
@@ -670,15 +812,14 @@ class ScrollProgress {
 
     init() {
         if (!this.progressBar) return;
-        
         window.addEventListener('scroll', throttle(this.updateProgress.bind(this), 16));
     }
 
     updateProgress() {
         const scrollTop = window.pageYOffset;
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight <= 0) return;
         const scrollPercent = (scrollTop / docHeight) * 100;
-        
         this.progressBar.style.width = `${Math.min(scrollPercent, 100)}%`;
     }
 }
@@ -692,22 +833,25 @@ class BackToTop {
 
     init() {
         if (!this.button) return;
-        
         this.button.addEventListener('click', this.scrollToTop.bind(this));
         window.addEventListener('scroll', throttle(this.toggleVisibility.bind(this), 100));
     }
 
     scrollToTop() {
-        gsap.to(window, {
-            scrollTo: { y: 0, autoKill: false },
-            duration: 1.5,
-            ease: "power2.inOut"
-        });
+        if (typeof ScrollToPlugin !== 'undefined') {
+            gsap.to(window, {
+                scrollTo: { y: 0, autoKill: false },
+                duration: 1.2,
+                ease: "power2.inOut"
+            });
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     }
 
     toggleVisibility() {
         const shouldShow = window.pageYOffset > 300;
-        
+
         if (shouldShow && !this.button.classList.contains('visible')) {
             this.button.classList.add('visible');
             gsap.from(this.button, {
@@ -724,6 +868,7 @@ class BackToTop {
                 ease: "power2.inOut",
                 onComplete: () => {
                     this.button.classList.remove('visible');
+                    gsap.set(this.button, { scale: 1, rotation: 0 });
                 }
             });
         }
@@ -770,37 +915,6 @@ class ParallaxEffects {
     }
 }
 
-// ===== SMOOTH SCROLLING =====
-class SmoothScrolling {
-    constructor() {
-        this.init();
-    }
-
-    init() {
-        // Enhanced smooth scrolling for anchor links
-        $$('a[href^="#"]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                const targetId = link.getAttribute('href');
-                const target = $(targetId);
-                
-                if (target && targetId !== '#') {
-                    e.preventDefault();
-                    
-                    gsap.to(window, {
-                        scrollTo: {
-                            y: target,
-                            offsetY: 80,
-                            autoKill: false
-                        },
-                        duration: 1.5,
-                        ease: "power2.inOut"
-                    });
-                }
-            });
-        });
-    }
-}
-
 // ===== INTERSECTION OBSERVER ENHANCEMENTS =====
 class IntersectionEnhancements {
     constructor() {
@@ -808,7 +922,6 @@ class IntersectionEnhancements {
     }
 
     init() {
-        // Create observers for different animation types
         this.createRevealObserver();
         this.createScaleObserver();
     }
@@ -818,8 +931,6 @@ class IntersectionEnhancements {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('revealed');
-                    
-                    // Add stagger effect for child elements
                     const children = entry.target.children;
                     if (children.length > 1) {
                         gsap.from(children, {
@@ -876,14 +987,12 @@ class PerformanceOptimizations {
     }
 
     optimizeAnimations() {
-        // Add will-change hints for animated elements
         const animatedElements = $$('.exp-card, .project-card, .team-card, .price-card, .magnetic-btn');
-        
+
         animatedElements.forEach(el => {
             el.addEventListener('mouseenter', () => {
                 el.style.willChange = 'transform';
             });
-            
             el.addEventListener('mouseleave', () => {
                 el.style.willChange = 'auto';
             });
@@ -892,29 +1001,27 @@ class PerformanceOptimizations {
 
     lazyLoadImages() {
         const images = $$('img[loading="lazy"]');
-        
-        if ('loading' in HTMLImageElement.prototype) {
-            // Native lazy loading supported
-            images.forEach(img => {
-                img.loading = 'lazy';
-            });
-        } else {
-            // Fallback for older browsers
-            const imageObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src || img.src;
-                        img.classList.remove('lazy');
-                        imageObserver.unobserve(img);
-                    }
-                });
-            });
 
-            images.forEach(img => {
-                imageObserver.observe(img);
-            });
+        if ('loading' in HTMLImageElement.prototype) {
+            // Native lazy loading — already set in HTML
+            return;
         }
+
+        // Fallback for older browsers
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src || img.src;
+                    img.classList.remove('lazy');
+                    imageObserver.unobserve(img);
+                }
+            });
+        });
+
+        images.forEach(img => {
+            imageObserver.observe(img);
+        });
     }
 }
 
@@ -931,25 +1038,27 @@ class AccessibilityEnhancements {
     }
 
     setupKeyboardNavigation() {
-        // Tab navigation for cards
         $$('.exp-card, .project-card, .team-card, .price-card').forEach(card => {
             if (!card.hasAttribute('tabindex')) {
                 card.setAttribute('tabindex', '0');
             }
-            
+
             card.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    card.click();
+                    // Find the primary link inside the card and click it
+                    const link = card.querySelector('a');
+                    if (link) {
+                        link.click();
+                    }
                 }
             });
         });
     }
 
     setupFocusManagement() {
-        // Enhanced focus styles
         const focusableElements = $$('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])');
-        
+
         focusableElements.forEach(el => {
             el.addEventListener('focus', () => {
                 if (el.getAttribute('data-magnetic')) {
@@ -960,7 +1069,6 @@ class AccessibilityEnhancements {
                     });
                 }
             });
-            
             el.addEventListener('blur', () => {
                 if (el.getAttribute('data-magnetic')) {
                     gsap.to(el, {
@@ -974,39 +1082,41 @@ class AccessibilityEnhancements {
     }
 
     setupReducedMotion() {
-        // Respect user's motion preferences
-        const preferesReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-        
-        if (preferesReducedMotion.matches) {
-            // Disable animations for users who prefer reduced motion
-            gsap.set("*", { animation: "none !important", transition: "none !important" });
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        if (prefersReducedMotion.matches) {
+            gsap.globalTimeline.timeScale(0);
             document.documentElement.style.setProperty('--transition-base', 'none');
             document.documentElement.style.setProperty('--transition-slow', 'none');
+            // Make sure content is visible even without animations
+            $$('.title-line span').forEach(span => {
+                span.style.transform = 'none';
+                span.style.opacity = '1';
+            });
         }
     }
 }
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize all components
     const preloader = new Preloader();
-    
-    // Initialize other components after a short delay to ensure DOM is ready
+
+    // Initialize everything else after a tick to ensure DOM is stable
     setTimeout(() => {
-        const customCursor = new CustomCursor();
-        const navigation = new Navigation();
-        const magneticButtons = new MagneticButtons();
-        const portfolioEffects = new PortfolioEffects();
-        const teamCardEffects = new TeamCardEffects();
-        const formEnhancements = new FormEnhancements();
-        const scrollProgress = new ScrollProgress();
-        const backToTop = new BackToTop();
-        const parallaxEffects = new ParallaxEffects();
-        const smoothScrolling = new SmoothScrolling();
-        const intersectionEnhancements = new IntersectionEnhancements();
-        const performanceOptimizations = new PerformanceOptimizations();
-        const accessibilityEnhancements = new AccessibilityEnhancements();
-        
+        new CustomCursor();
+        new Navigation();
+        new SmoothScrolling();
+        new MagneticButtons();
+        new PortfolioEffects();
+        new TeamCardEffects();
+        new FormEnhancements();
+        new ScrollProgress();
+        new BackToTop();
+        new ParallaxEffects();
+        new IntersectionEnhancements();
+        new PerformanceOptimizations();
+        new AccessibilityEnhancements();
+
         console.log('🚀 Obsidian Web Studio - All systems initialized');
     }, 100);
 });
@@ -1018,10 +1128,7 @@ window.addEventListener('error', (e) => {
 
 // ===== RESIZE HANDLER =====
 window.addEventListener('resize', debounce(() => {
-    // Refresh ScrollTrigger on resize
     ScrollTrigger.refresh();
-    
-    // Update any size-dependent calculations
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
 }, 250));
