@@ -1085,13 +1085,16 @@ class AccessibilityEnhancements {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
         if (prefersReducedMotion.matches) {
-            gsap.globalTimeline.timeScale(0);
+            // Kill all scroll-triggered animations
+            ScrollTrigger.getAll().forEach(st => st.kill());
+            // Disable GSAP transitions
+            gsap.globalTimeline.clear();
             document.documentElement.style.setProperty('--transition-base', 'none');
             document.documentElement.style.setProperty('--transition-slow', 'none');
-            // Make sure content is visible even without animations
-            $$('.title-line span').forEach(span => {
-                span.style.transform = 'none';
-                span.style.opacity = '1';
+            // Make sure all content is visible
+            $$('.title-line span, .reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+                el.style.transform = 'none';
+                el.style.opacity = '1';
             });
         }
     }

@@ -65,7 +65,7 @@ body {
     position: relative;
 }
 
-/* Subtle noise texture overlay */
+/* Subtle noise texture overlay — z-index: -1 so it never covers content */
 body::before {
     content: '';
     position: fixed;
@@ -74,9 +74,9 @@ body::before {
     width: 100%;
     height: 100%;
     background: 
-        radial-gradient(circle at 50% 50%, transparent 50%, rgba(0,0,0,0.1) 100%);
+        radial-gradient(circle at 50% 50%, transparent 60%, rgba(0,0,0,0.05) 100%);
     pointer-events: none;
-    z-index: 0;
+    z-index: -1;
 }
 
 /* Hide custom cursor on touch devices */
@@ -185,8 +185,8 @@ body:hover .cursor-dot {
     position: absolute;
     border-radius: 50%;
     background: radial-gradient(circle, var(--gold-glow), transparent 70%);
-    filter: blur(60px);
-    opacity: 0.4;
+    filter: blur(80px);
+    opacity: 0.2;
     animation: float 20s infinite ease-in-out;
 }
 
@@ -499,6 +499,7 @@ body:hover .cursor-dot {
     font-weight: 500;
     font-size: var(--fs-body);
     text-decoration: none;
+    text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
     min-height: 44px;
@@ -549,6 +550,11 @@ body:hover .cursor-dot {
     box-shadow: var(--shadow-glow);
 }
 
+/* Visited link colors — prevent browser defaults */
+.btn-primary:visited {
+    color: var(--obsidian-black);
+}
+
 /* --- Secondary Button --- */
 .btn-secondary {
     background: transparent;
@@ -559,6 +565,10 @@ body:hover .cursor-dot {
 .btn-secondary:hover {
     background: var(--gold-subtle);
     transform: translateY(-2px);
+}
+
+.btn-secondary:visited {
+    color: var(--gold);
 }
 
 /* --- Tertiary Button (Text) --- */
@@ -581,6 +591,7 @@ body:hover .cursor-dot {
     justify-content: center;
     position: relative;
     overflow: hidden;
+    isolation: isolate;
     background: 
         linear-gradient(180deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.95) 100%),
         url('Hero_Section/hero-bg.jpg') center/cover no-repeat;
@@ -675,6 +686,8 @@ body:hover .cursor-dot {
     padding: var(--section-padding);
     padding-left: var(--container-padding);
     padding-right: var(--container-padding);
+    position: relative;
+    z-index: 1;
 }
 
 .section-header {
@@ -796,6 +809,7 @@ body:hover .cursor-dot {
 /* ===== SERVICES / METHODOLOGY SECTION ===== */
 .expertise-section {
     position: relative;
+    isolation: isolate;
 }
 
 .expertise-grid {
@@ -818,6 +832,7 @@ body:hover .cursor-dot {
     z-index: 2;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .exp-card::before {
@@ -881,6 +896,11 @@ body:hover .cursor-dot {
 }
 
 /* ===== PORTFOLIO SECTION ===== */
+.portfolio {
+    position: relative;
+    isolation: isolate;
+}
+
 .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -979,6 +999,11 @@ body:hover .cursor-dot {
 }
 
 /* ===== TEAM SECTION ===== */
+.team-section {
+    position: relative;
+    isolation: isolate;
+}
+
 .team-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1018,6 +1043,7 @@ body:hover .cursor-dot {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    aspect-ratio: 1 / 1;
     filter: grayscale(1);
     transition: var(--transition-base);
     display: block;
@@ -1079,6 +1105,11 @@ body:hover .cursor-dot {
 }
 
 /* ===== PRICING SECTION ===== */
+.pricing-section {
+    position: relative;
+    isolation: isolate;
+}
+
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1194,6 +1225,10 @@ body:hover .cursor-dot {
     color: var(--text-gray);
 }
 
+.feature-list li:last-child {
+    margin-bottom: 0;
+}
+
 .feature-list i {
     color: var(--gold);
     font-size: 0.875rem;
@@ -1206,12 +1241,14 @@ body:hover .cursor-dot {
 .price-btn {
     width: 100%;
     text-align: center;
+    padding: 14px 28px;
 }
 
 /* ===== CONTACT SECTION ===== */
 .contact-section {
     position: relative;
     overflow: hidden;
+    isolation: isolate;
 }
 
 .contact-bg-pattern {
